@@ -22,4 +22,11 @@ app.use(express.static("public"));
 
 app.use(cookieParser())
 
+// router import
+import userRouters from "../src/routes/user.routes.js"
+
+// routes declaration
+// this is not handle register form so this is pass on req in import userRouters from "../src/routes/user.routes.js"
+app.use("/api/v1/users", userRouters);
+// http://localhost:8000/api/v1/users/register  
 export { app };

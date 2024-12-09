@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        lowecasse: true,
+        lowecase: true,
         //index are use for searching field 
         index: true,
     },
@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        lowecasse: true,
+        lowecase: true,
         trim: true,
     },
     fullname: {
@@ -50,7 +50,7 @@ const userSchema = mongoose.Schema({
     refreshToken: {
         type: String,
     }
-}, { Timestamps: true });
+}, { timestamps: true });
 
 // frehook this is function for password encrypt
 userSchema.pre("save", async function (next) {
