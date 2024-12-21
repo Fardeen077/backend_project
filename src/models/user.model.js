@@ -56,7 +56,7 @@ const userSchema = mongoose.Schema({
 userSchema.pre("save", async function (next) {
     // agar pass is modifide so ok but pass is not modifide so you retrue next 
     if (!this.isModified("password")) return next();
-    this.password = bcrypt.hash(this.password, 10); // 10 num is * has round
+    this.password = await bcrypt.hash(this.password, 10); // 10 num is * has round
     next();
 });
 
