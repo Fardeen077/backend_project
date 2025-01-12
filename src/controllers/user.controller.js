@@ -334,16 +334,70 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 coverImage: 1,
                 email: 1
             }
-        };
+        },
     ]);
-if (!chanage?.length) {
-    throw new ApiError(400, "channel does not exists");
-}
+    if (!chanage?.length) {
+        throw new ApiError(400, "channel does not exists");
+    }
 
-return res
-    .status(200)
-    .json(new ApiResponse(200, channel[0], "user channel is fatched is successfully"));
+    return res
+        .status(200)
+        .json(new ApiResponse(200, channel[0], "user channel is fatched is successfully"));
 });
+
+const getWatchHistory = asyncHandler(async (req, res) => {
+    // mongoDb are return sting objeact id but we pass _id so mongoDb are auto converate the sting to user id
+    const user = await User.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(req.user._id)
+            }
+        },
+        {
+            $lookup: {
+                from: "Videos",
+                localField: "watchHistory",
+                foreignField: "_id",
+                as: "watchHistory",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        fullName: 1,
+                                        username: 1,
+                                        avatar: 1,
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]);
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200, user[0].watchHistory,
+                "Watch history fetched successfully"
+            )
+        )
+});
+
 export {
     registerUser,
     loginUser,
@@ -355,4 +409,5 @@ export {
     updateUserAvatar,
     updateUserCoverImage,
     getUserChannelProfile,
+    getWatchHistory,
 }
